@@ -173,6 +173,18 @@ async function run(){
 
 
   //  ===updet add item
+    app.patch('/advertise', async(req, res) =>{
+       const id = req.params.id
+       const filter = {_id: ObjectId(id)}
+       const options = {upsert : true}
+       const updateDoc = {
+        $set:{
+          isAdvertise: true,
+        }
+       }
+       const result = await productCollection.updateOne(filter, updateDoc, options)
+       res.send(result)
+    })
     
     
 
