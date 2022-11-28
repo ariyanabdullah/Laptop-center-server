@@ -38,6 +38,18 @@ function verifyJET(req, res, next) {
 
 
 
+// ===user verify===
+const verifyUser = async (req, res, next) => {
+  const decodeEmail = req.decoded.email;
+  const filter = { email: decodeEmail };
+  const user = await userCollection.findOne(filter);
+
+  if (user.role !== "User") {
+    return res.status(403).send({ message: "Forbidden Access" });
+  }
+  next();
+};
+
 
 
 async function run(){
@@ -53,6 +65,9 @@ async function run(){
     const advertisedCollection = client.db('resellLeptop').collection('advertised')
     const orderCollection = client.db('resellLeptop').collection('orders')
     const paymentCollection = client.db('resellLeptop').collection('payment')
+
+
+
 
 
 
