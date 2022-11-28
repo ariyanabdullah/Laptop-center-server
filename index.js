@@ -20,62 +20,65 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 
 
-// ===verify Token====
-function verifyJwT(req, res, next) {
-  const authHeader = req.headers.authorization
-  if (!authHeader) {
-    return res.status(401).send('unauthorize access')
-  }
-  const token = authHeader.split(' ')[1]
-  jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
-    if (err) {
-      res.status(403).send({ message: 'forbiden access' })
-    }
-    req.decoded = decoded
-    next()
-  })
-}
+// //===verify Token====
+// const verifyJwt = (req, res, next) => {
+//   const authHeader = req.headers.authorization;
+//   if (!authHeader) {
+//     return res.status(401).send("unauthorize access");
+//   }
+//    console.log(authHeader);
+//   jwt.verify(authHeader, process.env.ACCESS_TOKEN, function (err, decoded) {
+//     if (err) {
+//       console.log(err);
+//       return res.status(402).send("unauthorize access");
+//     }
+
+//     req.decoded = decoded;
+//     next();
+//   });
+// };
 
 
 
-// ===user verify===
-const verifyUser = async (req, res, next) => {
-  const decodeEmail = req.decoded.email;
-  const filter = { email: decodeEmail };
-  const user = await userCollection.findOne(filter);
 
-  if (user.role !== "User") {
-    return res.status(403).send({ message: "Forbidden Access" });
-  }
-  next();
-};
+// // ===user verify===
+// const verifyUser = async (req, res, next) => {
+//   const decodeEmail = req.decoded.email;
+//   const filter = { email: decodeEmail };
+//   const user = await userCollection.findOne(filter);
 
-
-// === Seller Verify ===
-const verifySeller = async (req, res, next) => {
-  const decodeEmail = req.decoded.email;
-  const filter = { email: decodeEmail };
-  const user = await userCollection.findOne(filter);
-
-  if (user.role !== "Seller") {
-    return res.status(403).send({ message: "Forbidden Access" });
-  }
-  next();
-};
+//   if (user.role !== "User") {
+//     return res.status(403).send({ message: "Forbidden Access" });
+//   }
+//   next();
+// };
 
 
-// == Verify Admin===
+// // === Seller Verify ===
+// const verifySeller = async (req, res, next) => {
+//   const decodeEmail = req.decoded.email;
+//   const filter = { email: decodeEmail };
+//   const user = await userCollection.findOne(filter);
 
-const verifyAdmin = async (req, res, next) => {
-  const decodeEmail = req.decoded.email;
-  const filter = { email: decodeEmail };
-  const user = await userCollection.findOne(filter);
+//   if (user.role !== "Seller") {
+//     return res.status(403).send({ message: "Forbidden Access" });
+//   }
+//   next();
+// };
 
-  if (user.role !== "Admin") {
-    return res.status(403).send({ message: "Forbidden Access" });
-  }
-  next();
-};
+
+// // == Verify Admin===
+
+// const verifyAdmin = async (req, res, next) => {
+//   const decodeEmail = req.decoded.email;
+//   const filter = { email: decodeEmail };
+//   const user = await userCollection.findOne(filter);
+
+//   if (user.role !== "Admin") {
+//     return res.status(403).send({ message: "Forbidden Access" });
+//   }
+//   next();
+// };
 
 
 
@@ -159,7 +162,7 @@ async function run(){
    
 
     // ===get user orders
-    app.get('/allorder', verifyJwT, verifyUser,  async (req, res) =>{
+    app.get('/allorder',  async (req, res) =>{
       const email = req.query.email;
       const query = {email : email}
       const result = await orderCollection.find(query).toArray()
@@ -290,7 +293,7 @@ async function run(){
 
 
  
-//  //   ===delete advertise product data
+  //   ===delete advertise product data
    app.delete('/productdelete', async (req, res) =>{
      const name = req.query.name
      const query = {ProductName : name}
@@ -300,7 +303,7 @@ async function run(){
 
 
 
-
+//  == advertise post==
  app.post('/advertised', async (req, res) =>{
   const advertised = req.body;
   const result = await advertisedCollection.insertOne(advertised)
@@ -308,6 +311,7 @@ async function run(){
 })
 
 
+// ===show advertise at home page
 app.get('/showadvertised', async (req, res) =>{
   const query= {}
   const result =await advertisedCollection.find(query).toArray()
