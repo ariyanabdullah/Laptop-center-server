@@ -21,7 +21,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 
 // ===verify Token====
-function verifyJET(req, res, next) {
+function verifyJwT(req, res, next) {
   const authHeader = req.headers.authorization
   if (!authHeader) {
     return res.status(401).send('unauthorize access')
@@ -159,7 +159,7 @@ async function run(){
    
 
     // ===get user orders
-    app.get('/allorder', async (req, res) =>{
+    app.get('/allorder', verifyJwT, verifyUser,  async (req, res) =>{
       const email = req.query.email;
       const query = {email : email}
       const result = await orderCollection.find(query).toArray()
