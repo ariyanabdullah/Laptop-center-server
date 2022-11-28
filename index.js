@@ -56,7 +56,7 @@ async function run(){
 
 
 
-    // ====jwt Token provide====
+    // ====jwt Token provider====
 
      app.get('/jwt', async (req, res) => {
       const email = req.query.email
@@ -173,20 +173,32 @@ async function run(){
 
 
   //  ===updet add item
-    app.patch('/advertise', async(req, res) =>{
+    app.patch('/advertise/:id', async(req, res) =>{
        const id = req.params.id
        const filter = {_id: ObjectId(id)}
        const options = {upsert : true}
        const updateDoc = {
         $set:{
-          isAdvertise: true,
+          isAdvertise: "true",
         }
        }
        const result = await productCollection.updateOne(filter, updateDoc, options)
        res.send(result)
     })
     
-    
+
+
+
+
+    // ==get advertise for home page
+    app.get('/advertise', async(req, res) =>{
+      const advertise = req.query.isAdvertise
+      const query = {isAdvertise: advertise}
+      const result = await productCollection.find(query).toArray()
+      res.send(result)
+      console.log(result)
+    })
+
 
     // ===delete user
     app.delete('/userdelete/:id', async (req, res) =>{
@@ -302,7 +314,6 @@ app.get('/seller/:email', async (req, res) =>{
 // === delete product by axious
 app.delete('/deletereporteditem/:id', async (req, res) =>{
    const id = req.params.id;
-   console.log(id);
    const query = {_id: ObjectId(id)}
    const result = await productCollection.deleteOne(query)
    res.send(result)
