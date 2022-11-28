@@ -64,6 +64,22 @@ const verifySeller = async (req, res, next) => {
 };
 
 
+// == Verify Admin===
+
+const verifyAdmin = async (req, res, next) => {
+  const decodeEmail = req.decoded.email;
+  const filter = { email: decodeEmail };
+  const user = await userCollection.findOne(filter);
+
+  if (user.role !== "Admin") {
+    return res.status(403).send({ message: "Forbidden Access" });
+  }
+  next();
+};
+
+
+
+
 async function run(){
 
 
